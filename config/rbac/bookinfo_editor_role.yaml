@@ -1,0 +1,31 @@
+# permissions for end users to edit bookinfoes.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: bookinfo-editor-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: bookinfo-operator
+    app.kubernetes.io/part-of: bookinfo-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: bookinfo-editor-role
+rules:
+- apiGroups:
+  - deploy.kubernesto.io
+  resources:
+  - bookinfoes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - deploy.kubernesto.io
+  resources:
+  - bookinfoes/status
+  verbs:
+  - get

@@ -1,0 +1,12 @@
+apiVersion: deploy.kubernesto.io/v1alpha1
+kind: Bookinfo
+metadata:
+  labels:
+    app.kubernetes.io/name: bookinfo
+    app.kubernetes.io/instance: bookinfo-sample
+    app.kubernetes.io/part-of: bookinfo-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: bookinfo-operator
+  name: bookinfo-sample
+spec:
+  # TODO(user): Add fields here

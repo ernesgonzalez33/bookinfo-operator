@@ -1,0 +1,27 @@
+# permissions for end users to view bookinfoes.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: bookinfo-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: bookinfo-operator
+    app.kubernetes.io/part-of: bookinfo-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: bookinfo-viewer-role
+rules:
+- apiGroups:
+  - deploy.kubernesto.io
+  resources:
+  - bookinfoes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - deploy.kubernesto.io
+  resources:
+  - bookinfoes/status
+  verbs:
+  - get
