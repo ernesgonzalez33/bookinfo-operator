@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"time"
 
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -42,6 +43,16 @@ const (
 	ratingsName     = "ratings"
 	reviewsName     = "reviews"
 	productpageName = "productpage"
+
+	detailsVersion     = "v1"
+	ratingsVersion     = "v1"
+	reviewsVersion     = "v1"
+	productpageVersion = "v1"
+
+	detailsImage     = "docker.io/maistra/examples-bookinfo-details-v1:0.12.0"
+	ratingsImage     = "docker.io/maistra/examples-bookinfo-ratings-v1:0.12.0"
+	reviewsImage     = "docker.io/maistra/examples-bookinfo-reviews-v1:0.12.0"
+	productpageImage = "docker.io/maistra/examples-bookinfo-productpage-v1:0.12.0"
 )
 
 // BookinfoReconciler reconciles a Bookinfo object
@@ -397,6 +408,156 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{}, err
 	}
 
+	log.Info("Checking bookinfo deployments")
+
+	// Check Details deployment
+	log.Info("Checking %s deployment", detailsName)
+	detailsDep := &appsv1.Deployment{}
+	err = r.Get(ctx, types.NamespacedName{Name: detailsName, Namespace: req.Namespace}, detailsDep)
+	if err != nil && apierrors.IsNotFound(err) {
+		// Define details deployment
+		svc, err := r.getDeploymentDetails(detailsName, detailsVersion, detailsImage, bookinfo)
+		if err != nil {
+			log.Error(err, "Failed to define %s deployment", detailsName)
+
+			// The following implementation will update the status
+			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+				Status: metav1.ConditionFalse, Reason: "Reconciling",
+				Message: fmt.Sprintf("Failed to create deployment %s for the custom resource (%s): (%s)", detailsName, bookinfo.Name, err)})
+
+			if err := r.Status().Update(ctx, bookinfo); err != nil {
+				log.Error(err, "Failed to update Bookinfo status")
+				return ctrl.Result{}, err
+			}
+
+			return ctrl.Result{}, err
+		}
+
+		log.Info("Creating %s deployment", detailsName)
+		if err = r.Create(ctx, svc); err != nil {
+			log.Error(err, "Failed to create %s deployment", detailsName)
+			return ctrl.Result{}, err
+		}
+
+		// deployment created successfully
+		return ctrl.Result{RequeueAfter: time.Second}, nil
+
+	} else if err != nil {
+		log.Error(err, "Failed to get %s deployment", detailsName)
+		return ctrl.Result{}, err
+	}
+
+	// Check Ratings deployment
+	log.Info("Checking %s deployment", ratingsName)
+	ratingsDep := &appsv1.Deployment{}
+	err = r.Get(ctx, types.NamespacedName{Name: ratingsName, Namespace: req.Namespace}, ratingsDep)
+	if err != nil && apierrors.IsNotFound(err) {
+		// Define details deployment
+		svc, err := r.getDeploymentDetails(ratingsName, ratingsVersion, ratingsImage, bookinfo)
+		if err != nil {
+			log.Error(err, "Failed to define %s deployment", ratingsName)
+
+			// The following implementation will update the status
+			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+				Status: metav1.ConditionFalse, Reason: "Reconciling",
+				Message: fmt.Sprintf("Failed to create deployment %s for the custom resource (%s): (%s)", ratingsName, bookinfo.Name, err)})
+
+			if err := r.Status().Update(ctx, bookinfo); err != nil {
+				log.Error(err, "Failed to update Bookinfo status")
+				return ctrl.Result{}, err
+			}
+
+			return ctrl.Result{}, err
+		}
+
+		log.Info("Creating %s deployment", ratingsName)
+		if err = r.Create(ctx, svc); err != nil {
+			log.Error(err, "Failed to create %s deployment", ratingsName)
+			return ctrl.Result{}, err
+		}
+
+		// deployment created successfully
+		return ctrl.Result{RequeueAfter: time.Second}, nil
+
+	} else if err != nil {
+		log.Error(err, "Failed to get %s deployment", ratingsName)
+		return ctrl.Result{}, err
+	}
+
+	// Check Reviews deployment
+	log.Info("Checking %s deployment", reviewsName)
+	reviewsDep := &appsv1.Deployment{}
+	err = r.Get(ctx, types.NamespacedName{Name: reviewsName, Namespace: req.Namespace}, reviewsDep)
+	if err != nil && apierrors.IsNotFound(err) {
+		// Define details deployment
+		svc, err := r.getDeploymentDetails(reviewsName, reviewsVersion, reviewsImage, bookinfo)
+		if err != nil {
+			log.Error(err, "Failed to define %s deployment", reviewsName)
+
+			// The following implementation will update the status
+			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+				Status: metav1.ConditionFalse, Reason: "Reconciling",
+				Message: fmt.Sprintf("Failed to create deployment %s for the custom resource (%s): (%s)", reviewsName, bookinfo.Name, err)})
+
+			if err := r.Status().Update(ctx, bookinfo); err != nil {
+				log.Error(err, "Failed to update Bookinfo status")
+				return ctrl.Result{}, err
+			}
+
+			return ctrl.Result{}, err
+		}
+
+		log.Info("Creating %s deployment", reviewsName)
+		if err = r.Create(ctx, svc); err != nil {
+			log.Error(err, "Failed to create %s deployment", reviewsName)
+			return ctrl.Result{}, err
+		}
+
+		// deployment created successfully
+		return ctrl.Result{RequeueAfter: time.Second}, nil
+
+	} else if err != nil {
+		log.Error(err, "Failed to get %s deployment", reviewsName)
+		return ctrl.Result{}, err
+	}
+
+	// Check Productpage deployment
+	log.Info("Checking %s deployment", productpageName)
+	productpageDep := &appsv1.Deployment{}
+	err = r.Get(ctx, types.NamespacedName{Name: productpageName, Namespace: req.Namespace}, productpageDep)
+	if err != nil && apierrors.IsNotFound(err) {
+		// Define details deployment
+		svc, err := r.getDeploymentDetails(productpageName, productpageVersion, productpageImage, bookinfo)
+		if err != nil {
+			log.Error(err, "Failed to define %s deployment", productpageName)
+
+			// The following implementation will update the status
+			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+				Status: metav1.ConditionFalse, Reason: "Reconciling",
+				Message: fmt.Sprintf("Failed to create deployment %s for the custom resource (%s): (%s)", productpageName, bookinfo.Name, err)})
+
+			if err := r.Status().Update(ctx, bookinfo); err != nil {
+				log.Error(err, "Failed to update Bookinfo status")
+				return ctrl.Result{}, err
+			}
+
+			return ctrl.Result{}, err
+		}
+
+		log.Info("Creating %s deployment", productpageName)
+		if err = r.Create(ctx, svc); err != nil {
+			log.Error(err, "Failed to create %s deployment", productpageName)
+			return ctrl.Result{}, err
+		}
+
+		// deployment created successfully
+		return ctrl.Result{RequeueAfter: time.Second}, nil
+
+	} else if err != nil {
+		log.Error(err, "Failed to get %s deployment", productpageName)
+		return ctrl.Result{}, err
+	}
+
 	return ctrl.Result{}, nil
 }
 
@@ -449,6 +610,54 @@ func (r *BookinfoReconciler) getServiceAccountDetails(serviceAccountName string,
 	}
 
 	return sa, nil
+
+}
+
+func (r *BookinfoReconciler) getDeploymentDetails(name string, version string, image string, bookinfo *deployv1alpha1.Bookinfo) (client.Object, error) {
+
+	ls := labelsForBookinfo(bookinfo.Name)
+	ls["app"] = name
+	ls["version"] = version
+
+	dep := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name + "-" + version,
+			Namespace: bookinfo.Namespace,
+			Labels:    ls,
+		},
+		Spec: appsv1.DeploymentSpec{
+			Replicas: &bookinfo.Spec.Replicas,
+			Selector: &metav1.LabelSelector{
+				MatchLabels: ls,
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Annotations: map[string]string{
+						"sidecar.istio.io/inject": "true",
+					},
+					Labels: ls,
+				},
+				Spec: corev1.PodSpec{
+					ServiceAccountName: bookinfo.Name + "-" + name,
+					Containers: []corev1.Container{{
+						Name:            name,
+						Image:           image,
+						ImagePullPolicy: "IfNotPresent",
+						Ports: []corev1.ContainerPort{{
+							ContainerPort: 9080,
+						}},
+					}},
+				},
+			},
+		},
+	}
+
+	// Set the ownerRef for the Service
+	if err := ctrl.SetControllerReference(bookinfo, dep, r.Scheme); err != nil {
+		return nil, err
+	}
+
+	return dep, nil
 
 }
 
