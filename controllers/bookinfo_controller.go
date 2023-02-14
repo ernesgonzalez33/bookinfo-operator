@@ -64,6 +64,9 @@ type BookinfoReconciler struct {
 //+kubebuilder:rbac:groups=deploy.kubernesto.io,resources=bookinfoes,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=deploy.kubernesto.io,resources=bookinfoes/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=deploy.kubernesto.io,resources=bookinfoes/finalizers,verbs=update
+//+kubebuilder:rbac:groups=core,resources=events,services,serviceaccounts,verbs=create;patch
+//+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
