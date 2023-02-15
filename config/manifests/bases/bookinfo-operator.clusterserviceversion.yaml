@@ -1,0 +1,49 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+  name: bookinfo-operator.v0.0.0
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - description: Bookinfo is the Schema for the bookinfoes API
+      displayName: Bookinfo
+      kind: Bookinfo
+      name: bookinfos.deploy.kubernesto.io
+      statusDescriptors:
+      - description: Conditions store the status conditions of the Memcached instances
+        displayName: Conditions
+        path: conditions
+      version: v1alpha1
+  description: Operator that deploys Bookinfo with a set number of replicas
+  displayName: bookinfo-operator
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - bookinfo
+  links:
+  - name: Bookinfo Operator
+    url: https://bookinfo-operator.domain
+  maturity: alpha
+  provider:
+    name: Ernesto Gonzalez
+    url: https://github.com/ernesgonzalez33
+  version: 0.0.0
