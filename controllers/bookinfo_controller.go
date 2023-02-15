@@ -140,6 +140,9 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 				return ctrl.Result{}, err
 			}
 
+			// Service Mesh Member created successfully
+			return ctrl.Result{RequeueAfter: time.Second}, nil
+
 		} else if err != nil {
 			logger.Error(err, "Failed to get Service Mesh Member")
 			return ctrl.Result{}, err
