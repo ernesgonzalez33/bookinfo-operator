@@ -136,7 +136,7 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, err
 		}
 
-		logger.Info("Creating %s Service", detailsName)
+		logger.Info("Creating", "service", detailsName)
 		if err = r.Create(ctx, svc); err != nil {
 			logger.Error(err, "Failed to create", "service", detailsName)
 			return ctrl.Result{}, err
@@ -173,7 +173,7 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, err
 		}
 
-		logger.Info("Creating %s Service", ratingsName)
+		logger.Info("Creating", "service", ratingsName)
 		if err = r.Create(ctx, svc); err != nil {
 			logger.Error(err, "Failed to create", "service", ratingsName)
 			return ctrl.Result{}, err
@@ -210,7 +210,7 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, err
 		}
 
-		logger.Info("Creating %s Service", reviewsName)
+		logger.Info("Creating", "service", reviewsName)
 		if err = r.Create(ctx, svc); err != nil {
 			logger.Error(err, "Failed to create", "service", reviewsName)
 			return ctrl.Result{}, err
@@ -247,7 +247,7 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, err
 		}
 
-		logger.Info("Creating %s Service", productpageName)
+		logger.Info("Creating", "service", productpageName)
 		if err = r.Create(ctx, svc); err != nil {
 			logger.Error(err, "Failed to create", "service", productpageName)
 			return ctrl.Result{}, err
@@ -572,7 +572,7 @@ func (r *BookinfoReconciler) getServiceDetails(serviceName string, bookinfo *dep
 
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      bookinfo.Name,
+			Name:      serviceName,
 			Namespace: bookinfo.Namespace,
 			Labels:    ls,
 		},
