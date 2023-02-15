@@ -416,7 +416,7 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	// Check Details deployment
 	logger.Info("Checking", "deployment", detailsName)
 	detailsDep := &appsv1.Deployment{}
-	err = r.Get(ctx, types.NamespacedName{Name: detailsName, Namespace: req.Namespace}, detailsDep)
+	err = r.Get(ctx, types.NamespacedName{Name: detailsName + "-" + detailsVersion, Namespace: req.Namespace}, detailsDep)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details deployment
 		svc, err := r.getDeploymentDetails(detailsName, detailsVersion, detailsImage, bookinfo)
@@ -453,7 +453,7 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	// Check Ratings deployment
 	logger.Info("Checking", "deployment", ratingsName)
 	ratingsDep := &appsv1.Deployment{}
-	err = r.Get(ctx, types.NamespacedName{Name: ratingsName, Namespace: req.Namespace}, ratingsDep)
+	err = r.Get(ctx, types.NamespacedName{Name: ratingsName + "-" + ratingsVersion, Namespace: req.Namespace}, ratingsDep)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details deployment
 		svc, err := r.getDeploymentDetails(ratingsName, ratingsVersion, ratingsImage, bookinfo)
@@ -490,7 +490,7 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	// Check Reviews deployment
 	logger.Info("Checking", "deployment", reviewsName)
 	reviewsDep := &appsv1.Deployment{}
-	err = r.Get(ctx, types.NamespacedName{Name: reviewsName, Namespace: req.Namespace}, reviewsDep)
+	err = r.Get(ctx, types.NamespacedName{Name: reviewsName + "-" + reviewsVersion, Namespace: req.Namespace}, reviewsDep)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details deployment
 		svc, err := r.getDeploymentDetails(reviewsName, reviewsVersion, reviewsImage, bookinfo)
@@ -527,7 +527,7 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	// Check Productpage deployment
 	logger.Info("Checking", "deployment", productpageName)
 	productpageDep := &appsv1.Deployment{}
-	err = r.Get(ctx, types.NamespacedName{Name: productpageName, Namespace: req.Namespace}, productpageDep)
+	err = r.Get(ctx, types.NamespacedName{Name: productpageName + "-" + productpageVersion, Namespace: req.Namespace}, productpageDep)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details deployment
 		svc, err := r.getDeploymentDetails(productpageName, productpageVersion, productpageImage, bookinfo)
@@ -601,7 +601,7 @@ func (r *BookinfoReconciler) getServiceAccountDetails(serviceAccountName string,
 
 	sa := &corev1.ServiceAccount{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      bookinfo.Name + "-" + serviceAccountName,
+			Name:      serviceAccountName,
 			Namespace: bookinfo.Namespace,
 			Labels:    ls,
 		},
