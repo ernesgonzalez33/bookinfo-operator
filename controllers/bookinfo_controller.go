@@ -641,7 +641,7 @@ func (r *BookinfoReconciler) getDeploymentDetails(name string, version string, i
 					Labels: ls,
 				},
 				Spec: corev1.PodSpec{
-					ServiceAccountName: bookinfo.Name + "-" + name,
+					ServiceAccountName: name,
 					Containers: []corev1.Container{{
 						Name:            name,
 						Image:           image,
