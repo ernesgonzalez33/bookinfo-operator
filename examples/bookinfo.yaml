@@ -1,0 +1,7 @@
+apiVersion: deploy.kubernesto.io/v1alpha1
+kind: Bookinfo
+metadata:
+  name: bookinfo-sample
+  namespace: bookinfo
+spec:
+  replicas: 1
