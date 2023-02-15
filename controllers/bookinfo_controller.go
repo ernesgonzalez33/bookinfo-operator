@@ -116,14 +116,14 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	log.Info("Checking bookinfo services")
 
 	// Check Details service
-	log.Info("Checking %s service", detailsName)
+	log.Info("Checking", "service", detailsName)
 	detailsSvc := &corev1.Service{}
 	err = r.Get(ctx, types.NamespacedName{Name: detailsName, Namespace: req.Namespace}, detailsSvc)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details service
 		svc, err := r.getServiceDetails(detailsName, bookinfo)
 		if err != nil {
-			log.Error(err, "Failed to define %s service", detailsName)
+			log.Error(err, "Failed to define", "service", detailsName)
 
 			// The following implementation will update the status
 			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
@@ -140,7 +140,7 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 
 		log.Info("Creating %s Service", detailsName)
 		if err = r.Create(ctx, svc); err != nil {
-			log.Error(err, "Failed to create %s service", detailsName)
+			log.Error(err, "Failed to create", "service", detailsName)
 			return ctrl.Result{}, err
 		}
 
@@ -148,19 +148,19 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{RequeueAfter: time.Second}, nil
 
 	} else if err != nil {
-		log.Error(err, "Failed to get %s Service", detailsName)
+		log.Error(err, "Failed to get", "service", detailsName)
 		return ctrl.Result{}, err
 	}
 
 	// Check Ratings service
-	log.Info("Checking %s service", ratingsName)
+	log.Info("Checking", "service", ratingsName)
 	ratingsSvc := &corev1.Service{}
 	err = r.Get(ctx, types.NamespacedName{Name: ratingsName, Namespace: req.Namespace}, ratingsSvc)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details service
 		svc, err := r.getServiceDetails(ratingsName, bookinfo)
 		if err != nil {
-			log.Error(err, "Failed to define %s service", ratingsName)
+			log.Error(err, "Failed to define", "service", ratingsName)
 
 			// The following implementation will update the status
 			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
@@ -177,7 +177,7 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 
 		log.Info("Creating %s Service", ratingsName)
 		if err = r.Create(ctx, svc); err != nil {
-			log.Error(err, "Failed to create %s service", ratingsName)
+			log.Error(err, "Failed to create", "service", ratingsName)
 			return ctrl.Result{}, err
 		}
 
@@ -185,19 +185,19 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{RequeueAfter: time.Second}, nil
 
 	} else if err != nil {
-		log.Error(err, "Failed to get %s Service", ratingsName)
+		log.Error(err, "Failed to get", "service", ratingsName)
 		return ctrl.Result{}, err
 	}
 
 	// Check Reviews service
-	log.Info("Checking %s service", reviewsName)
+	log.Info("Checking", "service", reviewsName)
 	reviewsSvc := &corev1.Service{}
 	err = r.Get(ctx, types.NamespacedName{Name: reviewsName, Namespace: req.Namespace}, reviewsSvc)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details service
 		svc, err := r.getServiceDetails(reviewsName, bookinfo)
 		if err != nil {
-			log.Error(err, "Failed to define %s service", reviewsName)
+			log.Error(err, "Failed to define", "service", reviewsName)
 
 			// The following implementation will update the status
 			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
@@ -214,7 +214,7 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 
 		log.Info("Creating %s Service", reviewsName)
 		if err = r.Create(ctx, svc); err != nil {
-			log.Error(err, "Failed to create %s service", reviewsName)
+			log.Error(err, "Failed to create", "service", reviewsName)
 			return ctrl.Result{}, err
 		}
 
@@ -222,19 +222,19 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{RequeueAfter: time.Second}, nil
 
 	} else if err != nil {
-		log.Error(err, "Failed to get %s Service", reviewsName)
+		log.Error(err, "Failed to get", "service", reviewsName)
 		return ctrl.Result{}, err
 	}
 
 	// Check Productpage service
-	log.Info("Checking %s service", productpageName)
+	log.Info("Checking", "service", productpageName)
 	productpageSvc := &corev1.Service{}
 	err = r.Get(ctx, types.NamespacedName{Name: productpageName, Namespace: req.Namespace}, productpageSvc)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details service
 		svc, err := r.getServiceDetails(productpageName, bookinfo)
 		if err != nil {
-			log.Error(err, "Failed to define %s service", productpageName)
+			log.Error(err, "Failed to define", "service", productpageName)
 
 			// The following implementation will update the status
 			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
@@ -251,7 +251,7 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 
 		log.Info("Creating %s Service", productpageName)
 		if err = r.Create(ctx, svc); err != nil {
-			log.Error(err, "Failed to create %s service", productpageName)
+			log.Error(err, "Failed to create", "service", productpageName)
 			return ctrl.Result{}, err
 		}
 
@@ -259,21 +259,21 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{RequeueAfter: time.Second}, nil
 
 	} else if err != nil {
-		log.Error(err, "Failed to get %s Service", productpageName)
+		log.Error(err, "Failed to get", "service", productpageName)
 		return ctrl.Result{}, err
 	}
 
 	log.Info("Checking bookinfo service accounts")
 
 	// Check Details service account
-	log.Info("Checking %s service account", detailsName)
+	log.Info("Checking", "service account", detailsName)
 	detailsSa := &corev1.ServiceAccount{}
 	err = r.Get(ctx, types.NamespacedName{Name: detailsName, Namespace: req.Namespace}, detailsSa)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details service account
 		svc, err := r.getServiceAccountDetails(detailsName, bookinfo)
 		if err != nil {
-			log.Error(err, "Failed to define %s service account", detailsName)
+			log.Error(err, "Failed to define", "service account", detailsName)
 
 			// The following implementation will update the status
 			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
@@ -288,9 +288,9 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, err
 		}
 
-		log.Info("Creating %s Service Account", detailsName)
+		log.Info("Creating", "service account", detailsName)
 		if err = r.Create(ctx, svc); err != nil {
-			log.Error(err, "Failed to create %s service account", detailsName)
+			log.Error(err, "Failed to create", "service account", detailsName)
 			return ctrl.Result{}, err
 		}
 
@@ -298,19 +298,19 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{RequeueAfter: time.Second}, nil
 
 	} else if err != nil {
-		log.Error(err, "Failed to get %s Service Account", detailsName)
+		log.Error(err, "Failed to get", "service account", detailsName)
 		return ctrl.Result{}, err
 	}
 
 	// Check Ratings service account
-	log.Info("Checking %s service account", ratingsName)
+	log.Info("Checking", "service account", ratingsName)
 	ratingsSa := &corev1.ServiceAccount{}
 	err = r.Get(ctx, types.NamespacedName{Name: ratingsName, Namespace: req.Namespace}, ratingsSa)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details service account
 		svc, err := r.getServiceAccountDetails(ratingsName, bookinfo)
 		if err != nil {
-			log.Error(err, "Failed to define %s service account", ratingsName)
+			log.Error(err, "Failed to define", "service account", ratingsName)
 
 			// The following implementation will update the status
 			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
@@ -325,9 +325,9 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, err
 		}
 
-		log.Info("Creating %s Service Account", ratingsName)
+		log.Info("Creating", "service account", ratingsName)
 		if err = r.Create(ctx, svc); err != nil {
-			log.Error(err, "Failed to create %s service account", ratingsName)
+			log.Error(err, "Failed to create", "service account", ratingsName)
 			return ctrl.Result{}, err
 		}
 
@@ -335,19 +335,19 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{RequeueAfter: time.Second}, nil
 
 	} else if err != nil {
-		log.Error(err, "Failed to get %s Service Account", ratingsName)
+		log.Error(err, "Failed to get", "service account", ratingsName)
 		return ctrl.Result{}, err
 	}
 
 	// Check Reviews service account
-	log.Info("Checking %s service account", reviewsName)
+	log.Info("Checking", "service account", reviewsName)
 	reviewsSa := &corev1.ServiceAccount{}
 	err = r.Get(ctx, types.NamespacedName{Name: reviewsName, Namespace: req.Namespace}, reviewsSa)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details service account
 		svc, err := r.getServiceAccountDetails(reviewsName, bookinfo)
 		if err != nil {
-			log.Error(err, "Failed to define %s service account", reviewsName)
+			log.Error(err, "Failed to define", "service account", reviewsName)
 
 			// The following implementation will update the status
 			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
@@ -362,9 +362,9 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, err
 		}
 
-		log.Info("Creating %s Service Account", reviewsName)
+		log.Info("Creating", "service account", reviewsName)
 		if err = r.Create(ctx, svc); err != nil {
-			log.Error(err, "Failed to create %s service account", reviewsName)
+			log.Error(err, "Failed to create", "service account", reviewsName)
 			return ctrl.Result{}, err
 		}
 
@@ -372,19 +372,19 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{RequeueAfter: time.Second}, nil
 
 	} else if err != nil {
-		log.Error(err, "Failed to get %s Service Account", reviewsName)
+		log.Error(err, "Failed to get", "service account", reviewsName)
 		return ctrl.Result{}, err
 	}
 
 	// Check Productpage service account
-	log.Info("Checking %s service account", productpageName)
+	log.Info("Checking", "service account", productpageName)
 	productpageSa := &corev1.ServiceAccount{}
 	err = r.Get(ctx, types.NamespacedName{Name: productpageName, Namespace: req.Namespace}, productpageSa)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details service account
 		svc, err := r.getServiceAccountDetails(productpageName, bookinfo)
 		if err != nil {
-			log.Error(err, "Failed to define %s service account", productpageName)
+			log.Error(err, "Failed to define", "service account", productpageName)
 
 			// The following implementation will update the status
 			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
@@ -399,9 +399,9 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, err
 		}
 
-		log.Info("Creating %s Service Account", productpageName)
+		log.Info("Creating", "service account", productpageName)
 		if err = r.Create(ctx, svc); err != nil {
-			log.Error(err, "Failed to create %s service account", productpageName)
+			log.Error(err, "Failed to create", "service account", productpageName)
 			return ctrl.Result{}, err
 		}
 
@@ -409,21 +409,21 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{RequeueAfter: time.Second}, nil
 
 	} else if err != nil {
-		log.Error(err, "Failed to get %s Service Account", productpageName)
+		log.Error(err, "Failed to get", "service account", productpageName)
 		return ctrl.Result{}, err
 	}
 
 	log.Info("Checking bookinfo deployments")
 
 	// Check Details deployment
-	log.Info("Checking %s deployment", detailsName)
+	log.Info("Checking", "deployment", detailsName)
 	detailsDep := &appsv1.Deployment{}
 	err = r.Get(ctx, types.NamespacedName{Name: detailsName, Namespace: req.Namespace}, detailsDep)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details deployment
 		svc, err := r.getDeploymentDetails(detailsName, detailsVersion, detailsImage, bookinfo)
 		if err != nil {
-			log.Error(err, "Failed to define %s deployment", detailsName)
+			log.Error(err, "Failed to define", "deployment", detailsName)
 
 			// The following implementation will update the status
 			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
@@ -438,9 +438,9 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, err
 		}
 
-		log.Info("Creating %s deployment", detailsName)
+		log.Info("Creating", "deployment", detailsName)
 		if err = r.Create(ctx, svc); err != nil {
-			log.Error(err, "Failed to create %s deployment", detailsName)
+			log.Error(err, "Failed to create", "deployment", detailsName)
 			return ctrl.Result{}, err
 		}
 
@@ -448,19 +448,19 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{RequeueAfter: time.Second}, nil
 
 	} else if err != nil {
-		log.Error(err, "Failed to get %s deployment", detailsName)
+		log.Error(err, "Failed to get", "deployment", detailsName)
 		return ctrl.Result{}, err
 	}
 
 	// Check Ratings deployment
-	log.Info("Checking %s deployment", ratingsName)
+	log.Info("Checking", "deployment", ratingsName)
 	ratingsDep := &appsv1.Deployment{}
 	err = r.Get(ctx, types.NamespacedName{Name: ratingsName, Namespace: req.Namespace}, ratingsDep)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details deployment
 		svc, err := r.getDeploymentDetails(ratingsName, ratingsVersion, ratingsImage, bookinfo)
 		if err != nil {
-			log.Error(err, "Failed to define %s deployment", ratingsName)
+			log.Error(err, "Failed to define", "deployment", ratingsName)
 
 			// The following implementation will update the status
 			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
@@ -475,9 +475,9 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, err
 		}
 
-		log.Info("Creating %s deployment", ratingsName)
+		log.Info("Creating", "deployment", ratingsName)
 		if err = r.Create(ctx, svc); err != nil {
-			log.Error(err, "Failed to create %s deployment", ratingsName)
+			log.Error(err, "Failed to create", "deployment", ratingsName)
 			return ctrl.Result{}, err
 		}
 
@@ -485,19 +485,19 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{RequeueAfter: time.Second}, nil
 
 	} else if err != nil {
-		log.Error(err, "Failed to get %s deployment", ratingsName)
+		log.Error(err, "Failed to get", "deployment", ratingsName)
 		return ctrl.Result{}, err
 	}
 
 	// Check Reviews deployment
-	log.Info("Checking %s deployment", reviewsName)
+	log.Info("Checking", "deployment", reviewsName)
 	reviewsDep := &appsv1.Deployment{}
 	err = r.Get(ctx, types.NamespacedName{Name: reviewsName, Namespace: req.Namespace}, reviewsDep)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details deployment
 		svc, err := r.getDeploymentDetails(reviewsName, reviewsVersion, reviewsImage, bookinfo)
 		if err != nil {
-			log.Error(err, "Failed to define %s deployment", reviewsName)
+			log.Error(err, "Failed to define", "deployment", reviewsName)
 
 			// The following implementation will update the status
 			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
@@ -512,9 +512,9 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, err
 		}
 
-		log.Info("Creating %s deployment", reviewsName)
+		log.Info("Creating", "deployment", reviewsName)
 		if err = r.Create(ctx, svc); err != nil {
-			log.Error(err, "Failed to create %s deployment", reviewsName)
+			log.Error(err, "Failed to create", "deployment", reviewsName)
 			return ctrl.Result{}, err
 		}
 
@@ -522,19 +522,19 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{RequeueAfter: time.Second}, nil
 
 	} else if err != nil {
-		log.Error(err, "Failed to get %s deployment", reviewsName)
+		log.Error(err, "Failed to get", "deployment", reviewsName)
 		return ctrl.Result{}, err
 	}
 
 	// Check Productpage deployment
-	log.Info("Checking %s deployment", productpageName)
+	log.Info("Checking", "deployment", productpageName)
 	productpageDep := &appsv1.Deployment{}
 	err = r.Get(ctx, types.NamespacedName{Name: productpageName, Namespace: req.Namespace}, productpageDep)
 	if err != nil && apierrors.IsNotFound(err) {
 		// Define details deployment
 		svc, err := r.getDeploymentDetails(productpageName, productpageVersion, productpageImage, bookinfo)
 		if err != nil {
-			log.Error(err, "Failed to define %s deployment", productpageName)
+			log.Error(err, "Failed to define", "deployment", productpageName)
 
 			// The following implementation will update the status
 			meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
@@ -549,9 +549,9 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, err
 		}
 
-		log.Info("Creating %s deployment", productpageName)
+		log.Info("Creating", "deployment", productpageName)
 		if err = r.Create(ctx, svc); err != nil {
-			log.Error(err, "Failed to create %s deployment", productpageName)
+			log.Error(err, "Failed to create", "deployment", productpageName)
 			return ctrl.Result{}, err
 		}
 
@@ -559,7 +559,7 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{RequeueAfter: time.Second}, nil
 
 	} else if err != nil {
-		log.Error(err, "Failed to get %s deployment", productpageName)
+		log.Error(err, "Failed to get", "deployment", productpageName)
 		return ctrl.Result{}, err
 	}
 
