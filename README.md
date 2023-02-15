@@ -1,8 +1,8 @@
-# bookinfo-operator
-// TODO(user): Add simple overview of use/purpose
+# Bookinfo Operator
+A Kubernetes operator to deploy [Bookinfo](https://istio.io/latest/docs/examples/bookinfo/) with a set number of replicas.
 
 ## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+This operator is capable of deploying all Bookinfo microservices with a set number of replicas inside a Kubernetes cluster. For the moment is not compatible with Service Mesh.
 
 ## Getting Started
 You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
@@ -42,7 +42,7 @@ make undeploy
 ```
 
 ## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
+PR's and Issues are always welcome.
 
 ### How it works
 This project aims to follow the Kubernetes [Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
