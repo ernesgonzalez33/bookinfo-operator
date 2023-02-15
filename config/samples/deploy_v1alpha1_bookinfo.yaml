@@ -8,5 +8,9 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: bookinfo-operator
   name: bookinfo-sample
+  namespace: bookinfo
 spec:
   replicas: 1
+  meshEnabled: true
+  meshControlPlaneName: "basic"
+  meshControlPlaneNamespace: "istio-system"

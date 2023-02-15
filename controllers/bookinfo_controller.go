@@ -28,6 +28,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+	maistrav1 "maistra.io/api/core/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -105,6 +106,42 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		// Re-fetch bookinfo because of the change of status
 		if err := r.Get(ctx, req.NamespacedName, bookinfo); err != nil {
 			logger.Error(err, "Failed to re-fetch bookinfo after updated status")
+			return ctrl.Result{}, err
+		}
+	}
+
+	// Checking service mesh resources
+	logger.Info("Checking if compatibility with Service Mesh is enabled")
+	if bookinfo.Spec.MeshEnabled {
+		logger.Info("Checking if the SMM is already created")
+		found := &maistrav1.ServiceMeshMember{}
+		err = r.Get(ctx, types.NamespacedName{Name: "default", Namespace: req.Namespace}, found)
+		if err != nil && apierrors.IsNotFound(err) {
+			smm, err := r.getServiceMeshMemberDetails(bookinfo)
+			if err != nil {
+				logger.Error(err, "Failed to define Service Mesh Member")
+
+				// The following implementation will update the status
+				meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+					Status: metav1.ConditionFalse, Reason: "Reconciling",
+					Message: fmt.Sprintf("Failed to create Service Mesh Member for the custom resource (%s): (%s)", bookinfo.Name, err)})
+
+				if err := r.Status().Update(ctx, bookinfo); err != nil {
+					logger.Error(err, "Failed to update Bookinfo status")
+					return ctrl.Result{}, err
+				}
+
+				return ctrl.Result{}, err
+			}
+
+			logger.Info("Creating Service Mesh Member")
+			if err = r.Create(ctx, smm); err != nil {
+				logger.Error(err, "Failed to create Service Mesh Member")
+				return ctrl.Result{}, err
+			}
+
+		} else if err != nil {
+			logger.Error(err, "Failed to get Service Mesh Member")
 			return ctrl.Result{}, err
 		}
 	}
@@ -809,6 +846,30 @@ func (r *BookinfoReconciler) getDeploymentDetails(name string, version string, i
 	}
 
 	return dep, nil
+
+}
+
+func (r *BookinfoReconciler) getServiceMeshMemberDetails(bookinfo *deployv1alpha1.Bookinfo) (client.Object, error) {
+
+	smm := &maistrav1.ServiceMeshMember{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "default",
+			Namespace: bookinfo.Namespace,
+		},
+		Spec: maistrav1.ServiceMeshMemberSpec{
+			ControlPlaneRef: maistrav1.ServiceMeshControlPlaneRef{
+				Name:      bookinfo.Spec.MeshControlPlaneName,
+				Namespace: bookinfo.Spec.MeshControlPlaneNamespace,
+			},
+		},
+	}
+
+	// Set the ownerRef for the Service Mesh Member
+	if err := ctrl.SetControllerReference(bookinfo, smm, r.Scheme); err != nil {
+		return nil, err
+	}
+
+	return smm, nil
 
 }
 
