@@ -15,16 +15,22 @@ metadata:
               "app.kubernetes.io/name": "bookinfo",
               "app.kubernetes.io/part-of": "bookinfo-operator"
             },
-            "name": "bookinfo-sample"
+            "name": "bookinfo-sample",
+            "namespace": "bookinfo"
           },
-          "spec": null
+          "spec": {
+            "meshControlPlaneName": "basic",
+            "meshControlPlaneNamespace": "istio-system",
+            "meshEnabled": true,
+            "replicas": 1
+          }
         }
       ]
     capabilities: Basic Install
-    createdAt: "2023-02-15T10:19:12Z"
+    createdAt: "2023-02-16T15:39:42Z"
     operators.operatorframework.io/builder: operator-sdk-v1.27.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
-  name: bookinfo-operator.v0.0.2
+  name: bookinfo-operator.v0.1.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -201,7 +207,7 @@ spec:
                 - --leader-elect
                 command:
                 - /manager
-                image: quay.io/ernesgonzalez33/bookinfo-operator:0.0.2
+                image: quay.io/ernesgonzalez33/bookinfo-operator:0.1.0
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -284,4 +290,4 @@ spec:
   provider:
     name: Ernesto Gonzalez
     url: https://github.com/ernesgonzalez33
-  version: 0.0.2
+  version: 0.1.0
