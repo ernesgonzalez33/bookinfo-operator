@@ -58,6 +58,8 @@ const (
 	productpageImage = "docker.io/maistra/examples-bookinfo-productpage-v1:0.12.0"
 
 	gatewayName = "bookinfo-gateway"
+
+	microsPort = 9080
 )
 
 // BookinfoReconciler reconciles a Bookinfo object
@@ -187,6 +189,42 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 
 		} else if err != nil {
 			logger.Error(err, "Failed to get", "gateway", gatewayName)
+			return ctrl.Result{}, err
+		}
+
+		// Checking Virtual Service
+		logger.Info("Checking if the Virtual service is already created")
+		vsFound := &istiov1beta1.VirtualService{}
+		err = r.Get(ctx, types.NamespacedName{Name: bookinfo.Name, Namespace: req.Namespace}, vsFound)
+		if err != nil && apierrors.IsNotFound(err) {
+			gw, err := r.getVSDetails(bookinfo)
+			if err != nil {
+				logger.Error(err, "Failed to define", "virtual service", req.Name)
+
+				// The following implementation will update the status
+				meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+					Status: metav1.ConditionFalse, Reason: "Reconciling",
+					Message: fmt.Sprintf("Failed to create Virtual Service %s for the custom resource (%s): (%s)", bookinfo.Name, bookinfo.Name, err)})
+
+				if err := r.Status().Update(ctx, bookinfo); err != nil {
+					logger.Error(err, "Failed to update Bookinfo status")
+					return ctrl.Result{}, err
+				}
+
+				return ctrl.Result{}, err
+			}
+
+			logger.Info("Creating", "virtual service", bookinfo.Name)
+			if err = r.Create(ctx, gw); err != nil {
+				logger.Error(err, "Failed to create", "virtual service", bookinfo.Name)
+				return ctrl.Result{}, err
+			}
+
+			// Virtual Service created successfully
+			return ctrl.Result{RequeueAfter: time.Second}, nil
+
+		} else if err != nil {
+			logger.Error(err, "Failed to get", "virtual service", bookinfo.Name)
 			return ctrl.Result{}, err
 		}
 	}
@@ -808,7 +846,7 @@ func (r *BookinfoReconciler) getServiceDetails(serviceName string, bookinfo *dep
 		},
 
 		Spec: corev1.ServiceSpec{
-			Ports: []corev1.ServicePort{{Name: "http", Port: 9080}},
+			Ports: []corev1.ServicePort{{Name: "http", Port: microsPort}},
 			Selector: map[string]string{
 				"app": serviceName,
 			},
@@ -877,7 +915,7 @@ func (r *BookinfoReconciler) getDeploymentDetails(name string, version string, i
 						Image:           image,
 						ImagePullPolicy: "IfNotPresent",
 						Ports: []corev1.ContainerPort{{
-							ContainerPort: 9080,
+							ContainerPort: microsPort,
 						}},
 					}},
 				},
@@ -948,6 +986,74 @@ func (r *BookinfoReconciler) getGWDetails(bookinfo *deployv1alpha1.Bookinfo) (cl
 	}
 
 	return gw, nil
+
+}
+
+func (r *BookinfoReconciler) getVSDetails(bookinfo *deployv1alpha1.Bookinfo) (client.Object, error) {
+
+	vs := &istiov1beta1.VirtualService{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      bookinfo.Name,
+			Namespace: bookinfo.Namespace,
+		},
+		Spec: networkingv1beta1.VirtualService{
+			Hosts: []string{
+				"*",
+			},
+			Gateways: []string{
+				gatewayName,
+			},
+			Http: []*networkingv1beta1.HTTPRoute{{
+				Match: []*networkingv1beta1.HTTPMatchRequest{{
+					Uri: &networkingv1beta1.StringMatch{
+						MatchType: &networkingv1beta1.StringMatch_Exact{
+							Exact: "/productpage",
+						},
+					},
+				}, {
+					Uri: &networkingv1beta1.StringMatch{
+						MatchType: &networkingv1beta1.StringMatch_Prefix{
+							Prefix: "/static",
+						},
+					},
+				}, {
+					Uri: &networkingv1beta1.StringMatch{
+						MatchType: &networkingv1beta1.StringMatch_Exact{
+							Exact: "/login",
+						},
+					},
+				}, {
+					Uri: &networkingv1beta1.StringMatch{
+						MatchType: &networkingv1beta1.StringMatch_Exact{
+							Exact: "/logout",
+						},
+					},
+				}, {
+					Uri: &networkingv1beta1.StringMatch{
+						MatchType: &networkingv1beta1.StringMatch_Prefix{
+							Prefix: "/api/v1/products",
+						},
+					},
+				}},
+				Route: []*networkingv1beta1.HTTPRouteDestination{{
+					Destination: &networkingv1beta1.Destination{
+						Host: productpageName,
+						Port: &networkingv1beta1.PortSelector{
+							Number: microsPort,
+						},
+					},
+				}},
+			},
+			},
+		},
+	}
+
+	// Set the ownerRef for the Service Mesh Member
+	if err := ctrl.SetControllerReference(bookinfo, vs, r.Scheme); err != nil {
+		return nil, err
+	}
+
+	return vs, nil
 
 }
 
