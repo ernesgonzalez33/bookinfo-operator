@@ -2,7 +2,13 @@
 A Kubernetes operator to deploy [Bookinfo](https://istio.io/latest/docs/examples/bookinfo/) with a set number of replicas.
 
 ## Description
-This operator is capable of deploying all Bookinfo microservices with a set number of replicas inside a Kubernetes cluster. For the moment is not compatible with Service Mesh.
+This operator is capable of deploying all Bookinfo microservices with a set number of replicas inside a Kubernetes cluster. It can be deployed inside OpenShift Service Mesh or not.
+
+It does not create a Route or Ingress to be accesed from outside of the cluster. That should be done manually.
+
+## Prerequisites
+
+If you want to deploy inside OpenShift Service Mesh, it has to be already installed in the cluster.
 
 ## Getting Started
 You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
