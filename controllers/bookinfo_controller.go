@@ -227,6 +227,150 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			logger.Error(err, "Failed to get", "virtual service", bookinfo.Name)
 			return ctrl.Result{}, err
 		}
+
+		// Checking Details Destination Rule
+		logger.Info("Checking if the resource is already created", "destination rule", detailsName)
+		detailsDRFound := &istiov1beta1.DestinationRule{}
+		err = r.Get(ctx, types.NamespacedName{Name: detailsName, Namespace: req.Namespace}, detailsDRFound)
+		if err != nil && apierrors.IsNotFound(err) {
+			gw, err := r.getDRDetails(detailsName, detailsVersion, bookinfo)
+			if err != nil {
+				logger.Error(err, "Failed to define", "destination rule", detailsName)
+
+				// The following implementation will update the status
+				meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+					Status: metav1.ConditionFalse, Reason: "Reconciling",
+					Message: fmt.Sprintf("Failed to create Destination Rule %s for the custom resource (%s): (%s)", detailsName, bookinfo.Name, err)})
+
+				if err := r.Status().Update(ctx, bookinfo); err != nil {
+					logger.Error(err, "Failed to update Bookinfo status")
+					return ctrl.Result{}, err
+				}
+
+				return ctrl.Result{}, err
+			}
+
+			logger.Info("Creating", "destination rule", detailsName)
+			if err = r.Create(ctx, gw); err != nil {
+				logger.Error(err, "Failed to create", "destination rule", detailsName)
+				return ctrl.Result{}, err
+			}
+
+			// Destination Rule created successfully
+			return ctrl.Result{RequeueAfter: time.Second}, nil
+
+		} else if err != nil {
+			logger.Error(err, "Failed to get", "destination rule", detailsName)
+			return ctrl.Result{}, err
+		}
+
+		// Checking Reviews Destination Rule
+		logger.Info("Checking if the resource is already created", "destination rule", reviewsName)
+		reviewsDRFound := &istiov1beta1.DestinationRule{}
+		err = r.Get(ctx, types.NamespacedName{Name: reviewsName, Namespace: req.Namespace}, reviewsDRFound)
+		if err != nil && apierrors.IsNotFound(err) {
+			gw, err := r.getDRDetails(reviewsName, reviewsVersion, bookinfo)
+			if err != nil {
+				logger.Error(err, "Failed to define", "destination rule", reviewsName)
+
+				// The following implementation will update the status
+				meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+					Status: metav1.ConditionFalse, Reason: "Reconciling",
+					Message: fmt.Sprintf("Failed to create Destination Rule %s for the custom resource (%s): (%s)", reviewsName, bookinfo.Name, err)})
+
+				if err := r.Status().Update(ctx, bookinfo); err != nil {
+					logger.Error(err, "Failed to update Bookinfo status")
+					return ctrl.Result{}, err
+				}
+
+				return ctrl.Result{}, err
+			}
+
+			logger.Info("Creating", "destination rule", reviewsName)
+			if err = r.Create(ctx, gw); err != nil {
+				logger.Error(err, "Failed to create", "destination rule", reviewsName)
+				return ctrl.Result{}, err
+			}
+
+			// Destination Rule created successfully
+			return ctrl.Result{RequeueAfter: time.Second}, nil
+
+		} else if err != nil {
+			logger.Error(err, "Failed to get", "destination rule", reviewsName)
+			return ctrl.Result{}, err
+		}
+
+		// Checking Ratings Destination Rule
+		logger.Info("Checking if the resource is already created", "destination rule", ratingsName)
+		ratingsDRFound := &istiov1beta1.DestinationRule{}
+		err = r.Get(ctx, types.NamespacedName{Name: ratingsName, Namespace: req.Namespace}, ratingsDRFound)
+		if err != nil && apierrors.IsNotFound(err) {
+			gw, err := r.getDRDetails(ratingsName, ratingsVersion, bookinfo)
+			if err != nil {
+				logger.Error(err, "Failed to define", "destination rule", ratingsName)
+
+				// The following implementation will update the status
+				meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+					Status: metav1.ConditionFalse, Reason: "Reconciling",
+					Message: fmt.Sprintf("Failed to create Destination Rule %s for the custom resource (%s): (%s)", ratingsName, bookinfo.Name, err)})
+
+				if err := r.Status().Update(ctx, bookinfo); err != nil {
+					logger.Error(err, "Failed to update Bookinfo status")
+					return ctrl.Result{}, err
+				}
+
+				return ctrl.Result{}, err
+			}
+
+			logger.Info("Creating", "destination rule", ratingsName)
+			if err = r.Create(ctx, gw); err != nil {
+				logger.Error(err, "Failed to create", "destination rule", ratingsName)
+				return ctrl.Result{}, err
+			}
+
+			// Destination Rule created successfully
+			return ctrl.Result{RequeueAfter: time.Second}, nil
+
+		} else if err != nil {
+			logger.Error(err, "Failed to get", "destination rule", ratingsName)
+			return ctrl.Result{}, err
+		}
+
+		// Checking Ratings Destination Rule
+		logger.Info("Checking if the resource is already created", "destination rule", productpageName)
+		productpageDRFound := &istiov1beta1.DestinationRule{}
+		err = r.Get(ctx, types.NamespacedName{Name: productpageName, Namespace: req.Namespace}, productpageDRFound)
+		if err != nil && apierrors.IsNotFound(err) {
+			gw, err := r.getDRDetails(productpageName, productpageVersion, bookinfo)
+			if err != nil {
+				logger.Error(err, "Failed to define", "destination rule", productpageName)
+
+				// The following implementation will update the status
+				meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+					Status: metav1.ConditionFalse, Reason: "Reconciling",
+					Message: fmt.Sprintf("Failed to create Destination Rule %s for the custom resource (%s): (%s)", productpageName, bookinfo.Name, err)})
+
+				if err := r.Status().Update(ctx, bookinfo); err != nil {
+					logger.Error(err, "Failed to update Bookinfo status")
+					return ctrl.Result{}, err
+				}
+
+				return ctrl.Result{}, err
+			}
+
+			logger.Info("Creating", "destination rule", productpageName)
+			if err = r.Create(ctx, gw); err != nil {
+				logger.Error(err, "Failed to create", "destination rule", productpageName)
+				return ctrl.Result{}, err
+			}
+
+			// Destination Rule created successfully
+			return ctrl.Result{RequeueAfter: time.Second}, nil
+
+		} else if err != nil {
+			logger.Error(err, "Failed to get", "destination rule", productpageName)
+			return ctrl.Result{}, err
+		}
 	}
 
 	// Start checking Bookinfo resources
@@ -1054,6 +1198,38 @@ func (r *BookinfoReconciler) getVSDetails(bookinfo *deployv1alpha1.Bookinfo) (cl
 	}
 
 	return vs, nil
+
+}
+
+func (r *BookinfoReconciler) getDRDetails(name string, version string, bookinfo *deployv1alpha1.Bookinfo) (client.Object, error) {
+
+	dr := &istiov1beta1.DestinationRule{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: bookinfo.Namespace,
+		},
+		Spec: networkingv1beta1.DestinationRule{
+			Host: name,
+			TrafficPolicy: &networkingv1beta1.TrafficPolicy{
+				Tls: &networkingv1beta1.ClientTLSSettings{
+					Mode: networkingv1beta1.ClientTLSSettings_ISTIO_MUTUAL,
+				},
+			},
+			Subsets: []*networkingv1beta1.Subset{{
+				Name: version,
+				Labels: map[string]string{
+					"version": version,
+				},
+			}},
+		},
+	}
+
+	// Set the ownerRef for the Service Mesh Member
+	if err := ctrl.SetControllerReference(bookinfo, dr, r.Scheme); err != nil {
+		return nil, err
+	}
+
+	return dr, nil
 
 }
 
