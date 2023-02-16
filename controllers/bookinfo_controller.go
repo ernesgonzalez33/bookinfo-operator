@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"time"
 
+	networkingv1beta1 "istio.io/api/networking/v1beta1"
+	istiov1beta1 "istio.io/client-go/pkg/apis/networking/v1beta1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -54,6 +56,8 @@ const (
 	ratingsImage     = "docker.io/maistra/examples-bookinfo-ratings-v1:0.12.0"
 	reviewsImage     = "docker.io/maistra/examples-bookinfo-reviews-v1:0.12.0"
 	productpageImage = "docker.io/maistra/examples-bookinfo-productpage-v1:0.12.0"
+
+	gatewayName = "bookinfo-gateway"
 )
 
 // BookinfoReconciler reconciles a Bookinfo object
@@ -113,6 +117,8 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	// Checking service mesh resources
 	logger.Info("Checking if compatibility with Service Mesh is enabled")
 	if bookinfo.Spec.MeshEnabled {
+
+		// Checking SMM
 		logger.Info("Checking if the SMM is already created")
 		found := &maistrav1.ServiceMeshMember{}
 		err = r.Get(ctx, types.NamespacedName{Name: "default", Namespace: req.Namespace}, found)
@@ -145,6 +151,42 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 
 		} else if err != nil {
 			logger.Error(err, "Failed to get Service Mesh Member")
+			return ctrl.Result{}, err
+		}
+
+		// Checking Gateway
+		logger.Info("Checking if the Gateway is already created")
+		gwFound := &istiov1beta1.Gateway{}
+		err = r.Get(ctx, types.NamespacedName{Name: gatewayName, Namespace: req.Namespace}, gwFound)
+		if err != nil && apierrors.IsNotFound(err) {
+			gw, err := r.getGWDetails(bookinfo)
+			if err != nil {
+				logger.Error(err, "Failed to define", "gateway", gatewayName)
+
+				// The following implementation will update the status
+				meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+					Status: metav1.ConditionFalse, Reason: "Reconciling",
+					Message: fmt.Sprintf("Failed to create Gateway for the custom resource (%s): (%s)", bookinfo.Name, err)})
+
+				if err := r.Status().Update(ctx, bookinfo); err != nil {
+					logger.Error(err, "Failed to update Bookinfo status")
+					return ctrl.Result{}, err
+				}
+
+				return ctrl.Result{}, err
+			}
+
+			logger.Info("Creating", "gateway", gatewayName)
+			if err = r.Create(ctx, gw); err != nil {
+				logger.Error(err, "Failed to create", "gateway", gatewayName)
+				return ctrl.Result{}, err
+			}
+
+			// Gateway created successfully
+			return ctrl.Result{RequeueAfter: time.Second}, nil
+
+		} else if err != nil {
+			logger.Error(err, "Failed to get", "gateway", gatewayName)
 			return ctrl.Result{}, err
 		}
 	}
@@ -873,6 +915,39 @@ func (r *BookinfoReconciler) getServiceMeshMemberDetails(bookinfo *deployv1alpha
 	}
 
 	return smm, nil
+
+}
+
+func (r *BookinfoReconciler) getGWDetails(bookinfo *deployv1alpha1.Bookinfo) (client.Object, error) {
+
+	gw := &istiov1beta1.Gateway{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      gatewayName,
+			Namespace: bookinfo.Namespace,
+		},
+		Spec: networkingv1beta1.Gateway{
+			Selector: map[string]string{
+				"istio": "ingressgateway",
+			},
+			Servers: []*networkingv1beta1.Server{{
+				Port: &networkingv1beta1.Port{
+					Name:     "http",
+					Number:   80,
+					Protocol: "http",
+				},
+				Hosts: []string{
+					"*",
+				},
+			}},
+		},
+	}
+
+	// Set the ownerRef for the Service Mesh Member
+	if err := ctrl.SetControllerReference(bookinfo, gw, r.Scheme); err != nil {
+		return nil, err
+	}
+
+	return gw, nil
 
 }
 
