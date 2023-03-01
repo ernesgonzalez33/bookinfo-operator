@@ -97,9 +97,9 @@ rules:
 - apiGroups:
   - networking.istio.io
   resources:
-  - destinationrule
-  - gateway
-  - virtualservice
+  - destinationrules
+  - gateways
+  - virtualservices
   verbs:
   - create
   - delete
