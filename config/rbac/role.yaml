@@ -82,3 +82,29 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+  - maistra.io
+  resources:
+  - servicemeshmembers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - destinationrule
+  - gateway
+  - virtualservice
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
