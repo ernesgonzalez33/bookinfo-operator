@@ -708,6 +708,16 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 			return ctrl.Result{}, err
 		}
 
+		// The following implementation will update the status
+		meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+			Status: metav1.ConditionTrue, Reason: "Reconciling",
+			Message: fmt.Sprintf("Deployment for custom resource (%s) with %d replicas created successfully", detailsName, detailsDep.Spec.Replicas)})
+
+		if err := r.Status().Update(ctx, bookinfo); err != nil {
+			logger.Error(err, "Failed to update Bookinfo status")
+			return ctrl.Result{}, err
+		}
+
 		// deployment created successfully
 		return ctrl.Result{RequeueAfter: time.Second}, nil
 
@@ -740,17 +750,17 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 
 			return ctrl.Result{}, err
 		}
+
+		// The following implementation will update the status
+		meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+			Status: metav1.ConditionTrue, Reason: "Reconciling",
+			Message: fmt.Sprintf("Deployment for custom resource (%s) with %d replicas updated successfully", detailsName, replicas)})
+
+		if err := r.Status().Update(ctx, bookinfo); err != nil {
+			logger.Error(err, "Failed to update Bookinfo status")
+			return ctrl.Result{}, err
+		}
 		return ctrl.Result{Requeue: true}, nil
-	}
-
-	// The following implementation will update the status
-	meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
-		Status: metav1.ConditionTrue, Reason: "Reconciling",
-		Message: fmt.Sprintf("Deployment for custom resource (%s) with %d replicas created successfully", detailsName, replicas)})
-
-	if err := r.Status().Update(ctx, bookinfo); err != nil {
-		logger.Error(err, "Failed to update Bookinfo status")
-		return ctrl.Result{}, err
 	}
 
 	// Check Ratings deployment
@@ -779,6 +789,16 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		logger.Info("Creating", "deployment", ratingsName)
 		if err = r.Create(ctx, svc); err != nil {
 			logger.Error(err, "Failed to create", "deployment", ratingsName)
+			return ctrl.Result{}, err
+		}
+
+		// The following implementation will update the status
+		meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+			Status: metav1.ConditionTrue, Reason: "Reconciling",
+			Message: fmt.Sprintf("Deployment for custom resource (%s) with %d replicas created successfully", ratingsName, ratingsDep.Spec.Replicas)})
+
+		if err := r.Status().Update(ctx, bookinfo); err != nil {
+			logger.Error(err, "Failed to update Bookinfo status")
 			return ctrl.Result{}, err
 		}
 
@@ -814,17 +834,17 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 
 			return ctrl.Result{}, err
 		}
+		// The following implementation will update the status
+		meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+			Status: metav1.ConditionTrue, Reason: "Reconciling",
+			Message: fmt.Sprintf("Deployment for custom resource (%s) with %d replicas updated successfully", ratingsName, replicas)})
+
+		if err := r.Status().Update(ctx, bookinfo); err != nil {
+			logger.Error(err, "Failed to update Bookinfo status")
+			return ctrl.Result{}, err
+		}
+
 		return ctrl.Result{Requeue: true}, nil
-	}
-
-	// The following implementation will update the status
-	meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
-		Status: metav1.ConditionTrue, Reason: "Reconciling",
-		Message: fmt.Sprintf("Deployment for custom resource (%s) with %d replicas created successfully", ratingsName, replicas)})
-
-	if err := r.Status().Update(ctx, bookinfo); err != nil {
-		logger.Error(err, "Failed to update Bookinfo status")
-		return ctrl.Result{}, err
 	}
 
 	// Check Reviews deployment
@@ -853,6 +873,16 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		logger.Info("Creating", "deployment", reviewsName)
 		if err = r.Create(ctx, svc); err != nil {
 			logger.Error(err, "Failed to create", "deployment", reviewsName)
+			return ctrl.Result{}, err
+		}
+
+		// The following implementation will update the status
+		meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+			Status: metav1.ConditionTrue, Reason: "Reconciling",
+			Message: fmt.Sprintf("Deployment for custom resource (%s) with %d replicas created successfully", reviewsName, reviewsDep.Spec.Replicas)})
+
+		if err := r.Status().Update(ctx, bookinfo); err != nil {
+			logger.Error(err, "Failed to update Bookinfo status")
 			return ctrl.Result{}, err
 		}
 
@@ -888,17 +918,16 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 
 			return ctrl.Result{}, err
 		}
+		// The following implementation will update the status
+		meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+			Status: metav1.ConditionTrue, Reason: "Reconciling",
+			Message: fmt.Sprintf("Deployment for custom resource (%s) with %d replicas updated successfully", reviewsName, replicas)})
+
+		if err := r.Status().Update(ctx, bookinfo); err != nil {
+			logger.Error(err, "Failed to update Bookinfo status")
+			return ctrl.Result{}, err
+		}
 		return ctrl.Result{Requeue: true}, nil
-	}
-
-	// The following implementation will update the status
-	meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
-		Status: metav1.ConditionTrue, Reason: "Reconciling",
-		Message: fmt.Sprintf("Deployment for custom resource (%s) with %d replicas created successfully", reviewsName, replicas)})
-
-	if err := r.Status().Update(ctx, bookinfo); err != nil {
-		logger.Error(err, "Failed to update Bookinfo status")
-		return ctrl.Result{}, err
 	}
 
 	// Check Productpage deployment
@@ -927,6 +956,16 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		logger.Info("Creating", "deployment", productpageName)
 		if err = r.Create(ctx, svc); err != nil {
 			logger.Error(err, "Failed to create", "deployment", productpageName)
+			return ctrl.Result{}, err
+		}
+
+		// The following implementation will update the status
+		meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+			Status: metav1.ConditionTrue, Reason: "Reconciling",
+			Message: fmt.Sprintf("Deployment for custom resource (%s) with %d replicas created successfully", productpageName, productpageDep.Spec.Replicas)})
+
+		if err := r.Status().Update(ctx, bookinfo); err != nil {
+			logger.Error(err, "Failed to update Bookinfo status")
 			return ctrl.Result{}, err
 		}
 
@@ -962,17 +1001,16 @@ func (r *BookinfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 
 			return ctrl.Result{}, err
 		}
+		// The following implementation will update the status
+		meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
+			Status: metav1.ConditionTrue, Reason: "Reconciling",
+			Message: fmt.Sprintf("Deployment for custom resource (%s) with %d replicas updated successfully", productpageName, replicas)})
+
+		if err := r.Status().Update(ctx, bookinfo); err != nil {
+			logger.Error(err, "Failed to update Bookinfo status")
+			return ctrl.Result{}, err
+		}
 		return ctrl.Result{Requeue: true}, nil
-	}
-
-	// The following implementation will update the status
-	meta.SetStatusCondition(&bookinfo.Status.Conditions, metav1.Condition{Type: typeAvailableBookinfo,
-		Status: metav1.ConditionTrue, Reason: "Reconciling",
-		Message: fmt.Sprintf("Deployment for custom resource (%s) with %d replicas created successfully", productpageName, replicas)})
-
-	if err := r.Status().Update(ctx, bookinfo); err != nil {
-		logger.Error(err, "Failed to update Bookinfo status")
-		return ctrl.Result{}, err
 	}
 
 	return ctrl.Result{}, nil
